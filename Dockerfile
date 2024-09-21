@@ -1,5 +1,5 @@
 # Use a lightweight base image with Python support
-FROM python:3.11-slim
+FROM python:3.12-slim-bookworm
 
 # Set environment variables for JupyterLab
 ENV HOME=/opt/app-root \
