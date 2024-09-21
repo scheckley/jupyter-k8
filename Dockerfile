@@ -15,8 +15,11 @@ RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
 # Set the working directory
 WORKDIR $HOME
 
-# Install JupyterLab into the user's local directory
-RUN pip install --no-cache-dir --user jupyterlab
+# Install JupyterLab and jupyter-server into the user's local directory
+RUN pip install --no-cache-dir --user jupyterlab jupyter-server
+
+# Build JupyterLab application assets
+RUN jupyter lab build
 
 # Generate JupyterLab config and set server options
 RUN $HOME/.local/bin/jupyter lab --generate-config && \
