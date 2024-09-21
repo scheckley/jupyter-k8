@@ -25,7 +25,10 @@ RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
 RUN chown -R 1000:1000 $HOME
 
 # Set the working directory to a writable location
-WORKDIR $HOME/workspace
+#WORKDIR $HOME/workspace
+
+# Set the working directory to persistent storage volume
+WORKDIR /storage/
 
 # Install JupyterLab and jupyter-server into the user's local directory
 RUN pip install --no-cache-dir --user jupyterlab jupyter-server matplotlib seaborn pandas polars numpy scipy ray && \
