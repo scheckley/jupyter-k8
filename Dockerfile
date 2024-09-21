@@ -6,21 +6,16 @@ ENV USER=jupyter \
     HOME=/home/jupyter \
     JUPYTERLAB_DIR=$HOME/.jupyterlab
 
-# Create a non-root user and the necessary directories
-RUN useradd -m -s /bin/bash $USER && \
+# Create necessary directories and adjust permissions for OpenShift non-root execution
+RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
     mkdir -p $JUPYTERLAB_DIR && \
-    chown -R $USER:$USER $HOME
-
-# Switch to the non-root user
-USER $USER
-
-# Set the working directory
-WORKDIR $HOME
+    chmod -R 777 $HOME/.local/share/jupyter && \
+    chmod -R 777 $JUPYTERLAB_DIR
 
 # Install JupyterLab into the user's local directory
 RUN pip install --no-cache-dir --user jupyterlab
 
-# Ensure the PATH is updated in the current shell session where Jupyter will run
+# Use the full path to Jupyter executable to ensure it is found
 RUN $HOME/.local/bin/jupyter lab --generate-config && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
