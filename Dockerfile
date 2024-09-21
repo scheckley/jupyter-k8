@@ -15,12 +15,11 @@ RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
 # Set the working directory
 WORKDIR $HOME
 
-# Install JupyterLab into the user's local directory
-RUN pip install --no-cache-dir --user jupyterlab
+# Install JupyterLab and required tools into the user's local directory
+RUN pip install --no-cache-dir --user jupyterlab notebook
 
 # Generate a hashed password for Jupyter Notebook using the provided secret
-RUN pip install --no-cache-dir notebook && \
-    HASHED_PASSWORD=$(python3 -c "from notebook.auth import passwd; import os; print(passwd(os.environ['JUPYTER_PASSWORD']))") && \
+RUN HASHED_PASSWORD=$(python3 -c "from notebook.auth.security import passwd; import os; print(passwd(os.environ['JUPYTER_PASSWORD']))") && \
     jupyter lab --generate-config && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
