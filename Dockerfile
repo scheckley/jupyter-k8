@@ -15,8 +15,8 @@ RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
 # Set the working directory
 WORKDIR $HOME
 
-# Install JupyterLab and notebook into the user's local directory
-RUN pip install --no-cache-dir --user jupyterlab notebook
+# Install JupyterLab and jupyter-server into the user's local directory
+RUN pip install --no-cache-dir --user jupyterlab jupyter-server
 
 # Copy the Python script for password hashing
 COPY hash_password.py /opt/app-root/hash_password.py
@@ -34,4 +34,3 @@ EXPOSE 8888
 
 # Set the entry point to launch JupyterLab
 ENTRYPOINT ["/opt/app-root/.local/bin/jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
-

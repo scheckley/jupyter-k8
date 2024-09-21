@@ -1,6 +1,6 @@
 # hash_password.py
 import os
-from notebook.auth.security import passwd
+from jupyter_server.auth import passwd
 
 # Get password from environment variable
 password = os.environ.get("JUPYTER_PASSWORD")
