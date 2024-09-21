@@ -47,4 +47,4 @@ RUN $HOME/.local/bin/jupyter lab --generate-config && \
 EXPOSE 8888
 
 # Set the entry point to launch JupyterLab
-ENTRYPOINT ["sh", "-c", "$HOME/.local/bin/jupyter lab --no-browser --ip=0.0.0.0 --port=8888 --notebook-dir=$HOME/workspace"]
+ENTRYPOINT ["sh", "-c", "$HOME/.local/bin/jupyter lab --no-browser --ip=0.0.0.0 --port=8888 --notebook-dir=/storage"]
