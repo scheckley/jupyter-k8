@@ -14,7 +14,8 @@ RUN mkdir -p /opt/app-root/.local/share/jupyter/runtime && \
 WORKDIR /opt/app-root
 
 # Install JupyterLab and jupyter-server into the user's local directory
-RUN pip install --no-cache-dir --user jupyterlab jupyter-server
+RUN pip install --no-cache-dir --user jupyterlab jupyter-server && \
+    ls /opt/app-root/.local/bin  # List installed binaries for verification
 
 # Ensure JupyterLab is installed correctly by building the application assets
 RUN /opt/app-root/.local/bin/jupyter lab build
