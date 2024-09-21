@@ -23,9 +23,12 @@ RUN pip install --no-cache-dir --user jupyterlab && \
     echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.port = 8888" >> $HOME/.jupyter/jupyter_server_config.py
 
+# Ensure that the local bin directory is part of the PATH
+ENV PATH="$HOME/.local/bin:$PATH"
+
 # Expose the default JupyterLab port
 EXPOSE 8888
 
 # Set the entry point to launch JupyterLab
-ENTRYPOINT ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root"]
+ENTRYPOINT ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0"]
 
