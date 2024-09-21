@@ -19,7 +19,7 @@ WORKDIR $HOME
 RUN pip install --no-cache-dir --user jupyterlab jupyter-server
 
 # Ensure JupyterLab is installed correctly
-RUN $HOME/.local/bin/jupyter lab build
+RUN $HOME/.jupyter/jupyter lab build
 
 # Generate JupyterLab config and set server options
 RUN $HOME/.local/bin/jupyter lab --generate-config && \
