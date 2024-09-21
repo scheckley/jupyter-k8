@@ -19,11 +19,11 @@ RUN pip install --no-cache-dir --user jupyterlab
 RUN $HOME/.local/bin/jupyter lab --generate-config && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
-    echo "c.ServerApp.port = 8888" >> $HOME/.jupyter/jupyter_server_config.py
+    echo "c.ServerApp.port = 80" >> $HOME/.jupyter/jupyter_server_config.py
 
 # Expose the default JupyterLab port
 EXPOSE 8888
 
 # Set the entry point to launch JupyterLab
-ENTRYPOINT ["$HOME/.local/bin/jupyter", "lab", "--no-browser", "--ip=0.0.0.0"]
+ENTRYPOINT ["$HOME/.local/bin/jupyter", "lab", "--no-browser", "--ip=0.0.0.0" "--port=80"]
 
