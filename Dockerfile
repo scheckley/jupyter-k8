@@ -15,16 +15,20 @@ RUN useradd -m -s /bin/bash $USER && \
 # Switch to the non-root user
 USER $USER
 
-# Install JupyterLab and set the working directory
+# Set the working directory
 WORKDIR $HOME
-RUN pip install --no-cache-dir --user jupyterlab && \
-    jupyter lab --generate-config && \
+
+# Install JupyterLab into the user's local directory
+RUN pip install --no-cache-dir --user jupyterlab
+
+# Ensure the PATH is updated for the current shell session
+SHELL ["/bin/bash", "-c"]
+
+# Configure JupyterLab (now that jupyter is in the PATH)
+RUN jupyter lab --generate-config && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.port = 8888" >> $HOME/.jupyter/jupyter_server_config.py
-
-# Ensure that the local bin directory is part of the PATH
-ENV PATH="$HOME/.local/bin:$PATH"
 
 # Expose the default JupyterLab port
 EXPOSE 8888
