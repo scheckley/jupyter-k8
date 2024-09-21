@@ -1,4 +1,4 @@
-# Use a lightweight base image with Python support
+# Use a lightweight base image with Python and FIPS support
 FROM python:3.12-slim-bullseye
 
 # Set environment variables for JupyterLab
@@ -15,28 +15,28 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories and adjust permissions for OpenShift non-root execution
-RUN mkdir -p /opt/app-root/.local/share/jupyter/runtime && \
-    mkdir -p /opt/app-root/.local/bin && \
-    chmod -R 777 /opt/app-root/.local
+RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
+    mkdir -p $HOME/.local/bin && \
+    chmod -R 777 $HOME/.local
 
-# Set the working directory
-WORKDIR /opt/app-root
+# Set the working directory to a writable location
+WORKDIR $HOME
 
 # Install JupyterLab and jupyter-server into the user's local directory
 RUN pip install --no-cache-dir --user jupyterlab jupyter-server && \
-    ls /opt/app-root/.local/bin  # List installed binaries for verification
+    ls $HOME/.local/bin  # List installed binaries for verification
 
 # Ensure JupyterLab is installed correctly by building the application assets
-RUN /opt/app-root/.local/bin/jupyter lab build
+RUN $HOME/.local/bin/jupyter lab build
 
-# Generate JupyterLab configuration
-RUN /opt/app-root/.local/bin/jupyter lab --generate-config && \
-    echo "c.ServerApp.ip = '0.0.0.0'" >> /opt/app-root/.jupyter/jupyter_server_config.py && \
-    echo "c.ServerApp.open_browser = False" >> /opt/app-root/.jupyter/jupyter_server_config.py && \
-    echo "c.ServerApp.port = 8888" >> /opt/app-root/.jupyter/jupyter_server_config.py
+# Generate JupyterLab configuration without any authentication setup
+RUN $HOME/.local/bin/jupyter lab --generate-config && \
+    echo "c.ServerApp.ip = '0.0.0.0'" >> $HOME/.jupyter/jupyter_server_config.py && \
+    echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
+    echo "c.ServerApp.port = 8888" >> $HOME/.jupyter/jupyter_server_config.py
 
 # Expose the default JupyterLab port
 EXPOSE 8888
 
 # Set the entry point to launch JupyterLab
-ENTRYPOINT ["/opt/app-root/.local/bin/jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
+ENTRYPOINT ["sh", "-c", "$HOME/.local/bin/jupyter lab --no-browser --ip=0.0.0.0 --port=8888 --notebook-dir=$HOME"]
