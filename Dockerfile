@@ -15,16 +15,19 @@ RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
 # Set the working directory
 WORKDIR $HOME
 
-# Install JupyterLab and required tools into the user's local directory
+# Install JupyterLab and notebook into the user's local directory
 RUN pip install --no-cache-dir --user jupyterlab notebook
 
-# Generate a hashed password for Jupyter Notebook using the provided secret
-RUN HASHED_PASSWORD=$(python3 -c "from notebook.auth.security import passwd; import os; print(passwd(os.environ['JUPYTER_PASSWORD']))") && \
+# Copy the Python script for password hashing
+COPY hash_password.py /opt/app-root/hash_password.py
+
+# Generate a hashed password for Jupyter Notebook using the Python script
+RUN python3 /opt/app-root/hash_password.py && \
     jupyter lab --generate-config && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.port = 8888" >> $HOME/.jupyter/jupyter_server_config.py && \
-    echo "c.ServerApp.password = u'${HASHED_PASSWORD}'" >> $HOME/.jupyter/jupyter_server_config.py
+    echo "c.ServerApp.password = u'$(cat /opt/app-root/.hashed_password)'" >> $HOME/.jupyter/jupyter_server_config.py
 
 # Expose the default JupyterLab port
 EXPOSE 8888
