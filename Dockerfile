@@ -21,8 +21,11 @@ RUN pip install --no-cache-dir --user jupyterlab jupyter-server
 # Copy the Python script for password hashing
 COPY hash_password.py /opt/app-root/hash_password.py
 
+# Set the environment variable explicitly here to ensure it's available at build time
+ARG JUPYTER_PASSWORD
+
 # Generate a hashed password for Jupyter Notebook using the Python script
-RUN python3 /opt/app-root/hash_password.py && \
+RUN JUPYTER_PASSWORD=$JUPYTER_PASSWORD python3 /opt/app-root/hash_password.py && \
     jupyter lab --generate-config && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
