@@ -15,25 +15,18 @@ RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
 # Set the working directory
 WORKDIR $HOME
 
-# Install JupyterLab and jupyter-server into the user's local directory
-RUN pip install --no-cache-dir --user jupyterlab jupyter-server
+# Install JupyterLab into the user's local directory
+RUN pip install --no-cache-dir --user jupyterlab
 
-# Copy the Python script for password hashing
-COPY hash_password.py /opt/app-root/hash_password.py
-
-# Set the environment variable explicitly here to ensure it's available at build time
-ARG JUPYTER_PASSWORD
-
-# Generate a hashed password for Jupyter Notebook using the Python script
-RUN JUPYTER_PASSWORD=$JUPYTER_PASSWORD python3 /opt/app-root/hash_password.py && \
-    jupyter lab --generate-config && \
+# Generate JupyterLab config and set server options
+RUN $HOME/.local/bin/jupyter lab --generate-config && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> $HOME/.jupyter/jupyter_server_config.py && \
     echo "c.ServerApp.open_browser = False" >> $HOME/.jupyter/jupyter_server_config.py && \
-    echo "c.ServerApp.port = 8888" >> $HOME/.jupyter/jupyter_server_config.py && \
-    echo "c.ServerApp.password = u'$(cat /opt/app-root/.hashed_password)'" >> $HOME/.jupyter/jupyter_server_config.py
+    echo "c.ServerApp.port = 8888" >> $HOME/.jupyter/jupyter_server_config.py
 
 # Expose the default JupyterLab port
 EXPOSE 8888
 
 # Set the entry point to launch JupyterLab
 ENTRYPOINT ["/opt/app-root/.local/bin/jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
+
