@@ -28,7 +28,7 @@ RUN chown -R 1000:1000 $HOME
 WORKDIR $HOME/workspace
 
 # Install JupyterLab and jupyter-server into the user's local directory
-RUN pip install --no-cache-dir --user jupyterlab jupyter-server && \
+RUN pip install --no-cache-dir --user jupyterlab jupyter-server matplotlib seaborn pandas polars numpy scipy && \
     ls $HOME/.local/bin  # List installed binaries for verification
 
 # Ensure JupyterLab is installed correctly by building the application assets
