@@ -14,13 +14,18 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Create necessary directories and adjust permissions for OpenShift non-root execution
+# Create necessary directories
 RUN mkdir -p $HOME/.local/share/jupyter/runtime && \
     mkdir -p $HOME/.local/bin && \
-    chmod -R 777 $HOME/.local
+    mkdir -p $HOME/workspace && \
+    chmod -R 777 $HOME/.local && \
+    chmod -R 777 $HOME/workspace
+
+# Change ownership of the workspace directory to ensure write access
+RUN chown -R 1000:1000 $HOME
 
 # Set the working directory to a writable location
-WORKDIR $HOME
+WORKDIR $HOME/workspace
 
 # Install JupyterLab and jupyter-server into the user's local directory
 RUN pip install --no-cache-dir --user jupyterlab jupyter-server && \
@@ -39,4 +44,4 @@ RUN $HOME/.local/bin/jupyter lab --generate-config && \
 EXPOSE 8888
 
 # Set the entry point to launch JupyterLab
-ENTRYPOINT ["sh", "-c", "$HOME/.local/bin/jupyter lab --no-browser --ip=0.0.0.0 --port=8888 --notebook-dir=$HOME"]
+ENTRYPOINT ["sh", "-c", "$HOME/.local/bin/jupyter lab --no-browser --ip=0.0.0.0 --port=8888 --notebook-dir=$HOME/workspace"]
