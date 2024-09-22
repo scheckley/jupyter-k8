@@ -8,7 +8,7 @@ ENV HOME=/opt/app-root \
 # Install Node.js (version 20.x) and npm
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    curl && \
+    curl rsync && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
@@ -31,7 +31,7 @@ RUN chown -R 1000:1000 $HOME
 WORKDIR /storage/
 
 # Install JupyterLab and jupyter-server into the user's local directory
-RUN pip install --no-cache-dir --user jupyterlab jupyter-server matplotlib seaborn pandas polars numpy scipy ray && \
+RUN pip install --no-cache-dir --user jupyterlab jupyter-server matplotlib seaborn pandas polars numpy scipy ray scikit-learn && \
     ls $HOME/.local/bin  # List installed binaries for verification
 
 # Ensure JupyterLab is installed correctly by building the application assets
